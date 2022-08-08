@@ -1,4 +1,4 @@
-open_traffic:
+adludio_data_science_challenge:
   target: dev
   outputs:
     dev:
@@ -7,6 +7,6 @@ open_traffic:
       user: airflow
       pass: airflow
       port: 5432
-      dbname: airflow
+      dbname: adludio_data_science_challenge
       schema: public
       threads: 4
