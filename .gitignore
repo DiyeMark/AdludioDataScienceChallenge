@@ -133,3 +133,6 @@ dmypy.json
 
 # MacOs tempfile
 .DS_Store
+
+# Logs
+logs/
