@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
@@ -6,7 +8,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime, timedelta
 
 
-def insert_briefing_data():
+def ingest_briefing_data():
     pg_hook = PostgresHook(postgres_conn_id="postgres_adludio_data_science_challenge")
     conn = pg_hook.get_sqlalchemy_engine()
 
@@ -41,13 +43,47 @@ def insert_briefing_data():
     )
 
 
-def insert_campaigns_inventory_data():
+def ingest_campaigns_inventory_data():
     pg_hook = PostgresHook(postgres_conn_id="postgres_adludio_data_science_challenge")
     conn = pg_hook.get_sqlalchemy_engine()
 
     campaigns_inventory_data = pd.read_csv('/opt/airflow/data/campaigns_inventory_updated.csv')
     campaigns_inventory_data.to_sql(
         "campaigns_inventory",
+        con=conn,
+        if_exists="replace",
+        index=False,
+    )
+
+
+def ingest_global_design_data():
+    pg_hook = PostgresHook(postgres_conn_id="postgres_adludio_data_science_challenge")
+    conn = pg_hook.get_sqlalchemy_engine()
+
+    global_design_data = json.load(open('/opt/airflow/data/global_design_data.json'))
+    global_design_data_list = []
+    for game_key in global_design_data:
+        for auto_generated_request_id in global_design_data[game_key]:
+            single_global_data = []
+            try:
+                single_global_data.append(game_key + '/' + auto_generated_request_id)
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['labels'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['text'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['colors'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['videos_data'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['eng_type'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['direction'])
+                single_global_data.append(global_design_data[game_key][auto_generated_request_id]['adunit_sizes'])
+            except KeyError:
+                single_global_data.append(None)
+            global_design_data_list.append(single_global_data)
+
+    global_design_data_df = pd.DataFrame(global_design_data_list,
+                                         columns=['game_key', 'labels', 'text', 'colors', 'video_data', 'eng_type',
+                                                  'direction', 'adunit_size'])
+
+    global_design_data_df.to_sql(
+        "global_design",
         con=conn,
         if_exists="replace",
         index=False,
@@ -139,11 +175,15 @@ with DAG(
     )
     ingest_briefing_data_op = PythonOperator(
         task_id="ingest_briefing_data",
-        python_callable=insert_briefing_data
+        python_callable=ingest_briefing_data
     )
     ingest_campaigns_inventory_data_op = PythonOperator(
         task_id="ingest_campaigns_inventory_data",
-        python_callable=insert_campaigns_inventory_data
+        python_callable=ingest_campaigns_inventory_data
+    )
+    ingest_global_design_data_op = PythonOperator(
+        task_id="ingest_global_design_data",
+        python_callable=ingest_global_design_data
     )
 
-create_briefing_table_op >> create_campaigns_inventory_table_op >> create_global_design_table_op >> ingest_briefing_data_op >> ingest_campaigns_inventory_data_op
+create_briefing_table_op >> create_campaigns_inventory_table_op >> create_global_design_table_op >> ingest_briefing_data_op >> ingest_campaigns_inventory_data_op >> ingest_global_design_data_op

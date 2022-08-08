@@ -9,7 +9,7 @@ default_args = {
     'email_on_failure': True,
     'email_on_retry': True,
     'retries': 1,
-    "start_date": datetime(2022, 7, 20, 2, 30, 00),
+    "start_date": datetime(2022, 8, 8, 2, 30, 00),
     'retry_delay': timedelta(minutes=5)
 }
 
