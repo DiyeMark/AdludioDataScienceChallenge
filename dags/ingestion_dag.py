@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+import sqlalchemy
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
@@ -87,6 +88,14 @@ def ingest_global_design_data():
         con=conn,
         if_exists="replace",
         index=False,
+        dtype={"labels": sqlalchemy.types.JSON,
+               "text": sqlalchemy.types.JSON,
+               "colors": sqlalchemy.types.JSON,
+               "video_data": sqlalchemy.types.JSON,
+               "eng_type": sqlalchemy.types.JSON,
+               "direction": sqlalchemy.types.JSON,
+               "adunit_size": sqlalchemy.types.JSON,
+               }
     )
 
 
