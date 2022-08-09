@@ -138,5 +138,5 @@ dmypy.json
 logs/
 
 # EAST Data
-/notebooks/frozen_east_text_detection.pb
-/notebooks/frozen_east_text_detection.tar.gz
+/notebooks/bonus/frozen_east_text_detection.pb
+/notebooks/bonus/frozen_east_text_detection.tar.gz
