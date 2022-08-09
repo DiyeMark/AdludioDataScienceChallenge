@@ -1,0 +1,36 @@
+
+version: 2
+
+models:
+  - name: ads_data_joined
+    description: "A dbt model that contains briefing, campaigns_inventory, and global_design tables joined"
+    columns:
+      - name: campaign_id
+        description: "A unique identifier of a campaign"
+        tests:
+
+  - name: briefing
+    description: "A table containing campaign & creative plan data"
+    columns:
+      - name: campaign_id
+        description: "A unique identifier of a campaign"
+        tests:
+          - not_null
+
+  - name: campaigns_inventory
+    description: "A table containing campaign historical performance dataset"
+    columns:
+      - name: type
+        description: ""
+        tests:
+          - accepted_values:
+              values: ["first_dropped", "impression", "click-through-event"]
+
+  - name: global_design
+    description: "A table containing data found by analyzing the advertisements using computer vision"
+    columns:
+      - name: game_key
+        description: ""
+        test:
+          - unique
+          - not_null
