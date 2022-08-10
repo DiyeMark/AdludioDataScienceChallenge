@@ -49,8 +49,29 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-A dockerized Extract, Load, Transform (ETL) pipeline with PostgreSQL, Airflow, DBT, and a Redash.
+A dockerized Extract, Transform, Load (ETL) pipeline with PostgreSQL, Airflow, DBT, and a Redash.
 
+### Task - 1
+#### Data Engineering Task
+- Ingestion of given raw data into a data lake of your choice.
+- Modeling the data to reduce the memory process and improve the performance of fetch queries.
+- ETL pipeline to enrich your data into a data warehouse following your models.
+- Validator to validate the correctness of your data for the ETL pipeline.
+- And finally, an interface to expose your actionable data for the Machine learning task.
+
+### Task - 2
+#### Machine Learning Task
+- EDA
+- Visualization
+- Data Cleaning
+- Feature Extraction
+- Modeling
+### Bonus Task
+#### Computer Vision
+- Text Detection using Tesseract
+- Text Detection using EAST
+- Object Detection
+- Color Detection
 ### Built With
 
 Tech Stack used in this project
